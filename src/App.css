@@ -27,6 +27,22 @@
 .App-link {
   color: #61dafb;
 }
+.action-button {
+  display: inline;
+}
+.input-field {
+  display: block;
+}
+.input-group {
+  margin: auto;
+  width: 14%;
+  padding: 10px;
+}
+table {
+  margin: auto;
+  width: 14%;
+  border: 1px solid black;
+}
 
 @keyframes App-logo-spin {
   from {
