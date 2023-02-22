@@ -2,7 +2,7 @@ import logo from "./logo.svg";
 import "./App.css";
 import tableColumn from "./data";
 import { useState, useEffect } from "react";
-let newId = 3;
+
 function App() {
   const [data, setData] = useState([
     {
@@ -27,8 +27,9 @@ function App() {
       contact: "5432678543",
     },
   ]);
+  const [newColumn, setNewColumn] = useState("");
+  const [showField, setShowField] = useState(false);
   const initialNewData = {
-    id: newId++,
     name: "",
     address: "",
     contact: "",
@@ -48,13 +49,21 @@ function App() {
       setData(data.map((user) => (user.id === newData.id ? newData : user)));
       setNewData(initialNewData);
     } else {
-      setData([...data, newData]);
+      setData([...data, { ...newData, id: data.length + 1 }]);
       setNewData(initialNewData);
     }
   };
   const handleEdit = (user) => {
     setNewData({ ...user, ["exist"]: true });
   };
+  const handleAddNewColumn = (e) => {
+    if (e.key === "Enter") {
+      tableColumn.push({ columnName: newColumn });
+      setNewColumn("");
+      setShowField(false);
+    }
+  };
+
   useEffect(() => {
     console.log("data changed", data);
   }, [data]);
@@ -108,49 +117,61 @@ function App() {
         </button>
       </div>
       <table>
-        <thead>
-              
-          <tr>
-               
-            {tableColumn.map((heading) => {
-              return <th>{heading.columnName}</th>;
-            })}
-               
-          </tr>
-        </thead>
-        <tbody>
-          {data.map((user, index) => {
-            return (
-              <tr key={index}>
-                <td>{user["id"]}</td>
-                <td>{user["name"]}</td>
-                <td>{user["email"]}</td>
-                <td>{user["contact"]}</td>
-                <td>{user["address"]}</td>
-                <td>{user["action"]}</td>
-                <td>
-                  <button
-                    className="action-button"
-                    onClick={() => {
-                      handleEdit(user);
-                    }}
-                  >
-                    Edit
-                  </button>
-                  <button
-                    className="action-button"
-                    onClick={() => {
-                      handleDelete(user.id);
-                    }}
-                  >
-                    Delete
-                  </button>
-                </td>
-                        
-              </tr>
-            );
+        <tr>
+          {tableColumn.map((heading) => {
+            return <th>{heading.columnName}</th>;
           })}
-        </tbody>
+             
+          <th>
+            <button
+              className="action-button"
+              onClick={() => {
+                setShowField(true);
+              }}
+            >
+              Add Column
+            </button>
+            {showField && (
+              <input
+                value={newColumn}
+                onChange={(e) => setNewColumn(e.target.value)}
+                onKeyDown={(e) => {
+                  handleAddNewColumn(e);
+                }}
+              />
+            )}
+          </th>
+        </tr>
+        {data.map((user, index) => {
+          return (
+            <tr key={index}>
+              <td>{user["id"]}</td>
+              <td>{user["name"]}</td>
+              <td>{user["email"]}</td>
+              <td>{user["contact"]}</td>
+              <td>{user["address"]}</td>
+              <td>
+                <button
+                  className="action-button"
+                  onClick={() => {
+                    handleEdit(user);
+                  }}
+                >
+                  Edit
+                </button>
+                <button
+                  className="action-button"
+                  onClick={() => {
+                    handleDelete(user.id);
+                  }}
+                >
+                  Delete
+                </button>
+              </td>
+                      
+            </tr>
+          );
+        })}
       </table>
     </div>
   );
